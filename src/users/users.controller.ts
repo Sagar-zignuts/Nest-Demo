@@ -21,38 +21,24 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 //http://localhost:3000/users
 @Controller('users')
 export class UsersControllr {
-  @Get(':isMarried')
-  getAllUsers(
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Param() param:GetUserParamsDto
-  ) {
-    console.log(param);
 
-    const usersService = new UsersService();
-    return usersService.getALlUsers();
+
+  constructor(private usersService  : UsersService){
+
   }
 
-  @Get(':id')
-  getUSerById(@Param('id', ParseIntPipe) id: any) {
-    const usersService = new UsersService();
-    return usersService.getUserById(id);
+  @Get()
+  getAllUsers() {
+    return this.usersService.getALlUsers();
   }
+
 
   @Post()
   createUser(@Body() user:CreateUserDto) {
 
-    const usersService = new UsersService();
-    console.log(user instanceof CreateUserDto);
-    usersService.createUser(user);
-    return 'User created';
+    this.usersService.createUser(user);
   }
 
-  @Patch()
-  updateUser(@Body() body:UpdateUserDto){
-    console.log(body);
-    
-  }
 }
 
 

@@ -1,14 +1,18 @@
-import { IsBoolean, IsEmail, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsEmail, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 export class CreateUserDto {
-    
-    @IsInt()
-    id : number;
 
     @IsString({message : "Name should be string only"}) // Custom Error message
     @IsNotEmpty()
-    @MinLength(2 ,{message : "Name should have minimum 3 char"})
+    @MinLength(3 ,{message : "Name should have minimum 3 char"})
+    @MaxLength(100)
     name :string;
+
+    @IsString({message : "Name should be string only"}) // Custom Error message
+    @IsNotEmpty()
+    @MinLength(3 ,{message : "Name should have minimum 3 char"})
+    @MaxLength(100)
+    lastname :string;
 
     @IsString()
     @IsOptional()
@@ -16,8 +20,13 @@ export class CreateUserDto {
     gender: string;
 
     @IsEmail()
+    @IsNotEmpty()
+    @MaxLength(100)
     email : string;
 
-    @IsBoolean()
-    isMarried : boolean;
+    @IsString()
+    @IsNotEmpty()
+    @MinLength(8)
+    @MaxLength(100)
+    password : string;
 }

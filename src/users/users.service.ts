@@ -1,18 +1,31 @@
-export class UsersService{
-    users: {id : number ,name : string , email : string , gender : string , isMarried : boolean}[] = [
-        {id : 1 , name : 'john' ,email : "xyz@gmail.com", gender : 'male' ,isMarried : false},
-        {id : 2 , name : 'mark' ,email : "abc@gmail.com", gender : 'male' ,isMarried : true},
-    ]
+import { Body, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { AuthService } from 'src/auth/auth.service';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from './dtos/create-user.dto';
 
-    getALlUsers(){
-        return this.users;
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private userRepository : Repository<User>) {}
+
+
+  getALlUsers() {
+  }
+
+  public async createUser(userDto : CreateUserDto) {
+    const user = await this.userRepository.findOne({
+      where : {email : userDto.email}
+    })
+
+    if (user) {
+      return "User already exists"
     }
 
-    getUserById(id : number){
-        return this.users.find(x => x.id === id)
-    }
-
-    createUser(user : {id : number ,name : string , email : string , gender : string , isMarried : boolean}){
-        this.users.push(user);
-    }
+    let newUser = this.userRepository.create(userDto)
+    newUser =await this.userRepository.save(newUser)
+    return newUser;
+  }
 }
