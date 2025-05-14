@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   Param,
   ParseBoolPipe,
@@ -13,9 +14,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { GetUserParamsDto } from './dtos/get-user-params.dto';
-import { UpdateUserDto } from './dtos/update-user.dto';
-
 
 
 //http://localhost:3000/users
@@ -37,6 +35,13 @@ export class UsersControllr {
   createUser(@Body() user:CreateUserDto) {
 
     this.usersService.createUser(user);
+  }
+
+  @Delete(':id')
+  deleteUser(@Param('id', ParseIntPipe) id : number){
+    console.log(id);
+    
+    return this.usersService.deleteUser(id)
   }
 
 }

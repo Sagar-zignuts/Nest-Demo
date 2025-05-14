@@ -1,24 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
+import { Repository } from 'typeorm';
+import { Tweet } from './tweet.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateTweetDTO } from './dto/create-tweet.dto';
 
 @Injectable()
 export class TweetService {
+  constructor(
+    private readonly userService: UsersService,
+    @InjectRepository(Tweet)
+    private TweetRepository: Repository<Tweet>,
+  ) {}
 
-    constructor(private readonly userService : UsersService) {
-        
+  public async getTweets(userId: number) {
+    return await this.TweetRepository.find({
+        where : {
+            user : {id:userId},
+            
+        },
+        relations : { //Eager Loding nu short cut , or second way
+            user : true
+        }
+    })
+
+
+  }
+
+  public async CreateTweet(createTweetDTO: CreateTweetDTO) {
+    const user = await this.userService.findUserById(createTweetDTO.userId);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${createTweetDTO.userId} not found`);
     }
 
-    tweets : {text : String, date : Date, userId : Number}[]=
-        [
-            {text : "Some Text", date : new Date('2024-2-2'),  userId : 1},
-            {text : "Some other Text", date : new Date('2024-12-2'),  userId : 2},
-            {text : "Some other other Text", date : new Date('2024-7-2'),  userId : 3}
-]
+    const tweet = this.TweetRepository.create({
+      text: createTweetDTO.text,
+      image: createTweetDTO.image,
+    });
 
-// getTweet(userid  : Number){
-//     const user = this.userService.getUserById(userid)
-//     const tweets = this.tweets.filter(x=> x.userId === userid)
-//     const responce = tweets.map(t => { return {text : t.text , date : t.date , name : user?.name}});
-//     return responce
-// }
+    tweet.user = user; // Assign the user relation explicitly
+
+    return await this.TweetRepository.save(tweet);
+  }
 }
