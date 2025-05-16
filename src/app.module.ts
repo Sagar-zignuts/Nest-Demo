@@ -9,26 +9,33 @@ import { User } from './users/user.entity';
 import { ProfileModule } from './profile/profile.module';
 import { Profile } from './profile/profile.entity';
 import { HashtagModule } from './hashtag/hashtag.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+const ENV = process.env.NODE_ENV;
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal :true,
+      envFilePath : !ENV ? '.env' : `.env.${ENV}`
+    }),
     UsersModule,
     TweetModule,
     AuthModule,
     ProfileModule,
     TypeOrmModule.forRootAsync({
-      imports: [],
-      inject: [],
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService : ConfigService) => ({
         type: 'postgres',
         // entities: [User, Profile],
         autoLoadEntities : true,
         synchronize: true,
-        username: 'postgres',
-        password: 'password',
-        database: 'demo-nest',
-        port: 5432,
-        host: 'localhost',
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        port: +configService.get('DB_PORT'),
+        host: configService.get('DB_HOST'),
       }),
     }),
     ProfileModule,

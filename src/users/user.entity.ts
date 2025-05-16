@@ -40,14 +40,14 @@ export class User {
   })
   password: string;
 
-  @OneToOne(()=> Profile ,(profile)=>profile.user ,{
-    cascade : ['insert']
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    cascade: ['insert'],
   })
-  profile : Profile;
+  profile: Profile;
   // @JoinColumn() // Aaa forign key column create kre , to jyaaa create krvani hoy tyaaj use krvanu aneee
 
-  @OneToMany(()=>Tweet, (tweet)=>tweet.user)
-  tweets : Tweet
+  @OneToMany(() => Tweet, (tweet) => tweet.user)
+  tweets: Tweet;
 
   @CreateDateColumn()
   createdAt: Date;

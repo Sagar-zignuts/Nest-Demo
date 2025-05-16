@@ -1,4 +1,4 @@
-import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsArray, IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateTweetDTO{
 
@@ -12,4 +12,10 @@ export class CreateTweetDTO{
     @IsInt()
     @IsNotEmpty()
     userId : number
+
+
+    @IsOptional()
+    @IsInt({each : true})
+    @IsArray()
+    hashtag? : number[]
 }

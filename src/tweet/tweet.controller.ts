@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import { CreateTweetDTO } from './dto/create-tweet.dto';
+import { UpdateTweetDTO } from './dto/update-tweet.dto';
 
 // http://localhost:3000/tweet
 @Controller('tweet')
@@ -26,4 +27,16 @@ public GetTweet(@Param('userId', ParseIntPipe) userId:number){
 public CreateTweet(@Body() tweet : CreateTweetDTO){
     return this.tweetService.CreateTweet(tweet)
 }
+
+@Patch()
+public updateTweet(@Body() tweet : UpdateTweetDTO){
+    return this.tweetService.updateTweet(tweet)
+}
+
+@Delete(':id')
+public deleteTweet(@Param('id' , ParseIntPipe) id : number){
+    this.tweetService.deleteTweet(id)
+    return {deleted : true , id}
+}
+
 }
